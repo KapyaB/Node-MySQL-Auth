@@ -3,41 +3,10 @@ const LocalStrategy = require("passport-local").Strategy;
 const JwtStrategy = require("passport-jwt").Strategy;
 const { ExtractJwt } = require("passport-jwt");
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
 
 const db = require("../models");
 const User = db.User;
-
-// telling passport we are using username/email + password combination to authenticate
-passport.use(
-  new LocalStrategy(
-    {
-      // we are using email
-      usernameField: "email"
-    },
-    async (email, password, done) => {
-      // code runs when user tries to log in
-      const user = await User.findOne({
-        where: {
-          email: email
-        }
-      });
-
-      if (!user) {
-        return done(null, false, {
-          message: "Invalid Credentials"
-        });
-      } else if (!user.validPassword(password)) {
-        // correct email wrong password
-        return done(null, false, {
-          message: "Invalid Credentials"
-        });
-      }
-
-      // all good, return user
-      return done(null, user);
-    }
-  )
-);
 
 // jwt for signup
 // if using cookies extract jwt token from the cookie sent with every request.

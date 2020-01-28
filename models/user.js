@@ -1,9 +1,22 @@
 // Use bcryptjs for password hashing
 const bcrypt = require("bcryptjs");
+const Sequelize = require("sequelize");
 
 // Create a user model
 module.exports = (sequelize, DataTypes) => {
   var User = sequelize.define("User", {
+    // unique identifier. workaroud for the easy-to-guess int ids
+    uuid: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV1,
+      primaryKey: true
+    },
+
+    username: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
+    },
+
     // email can't be null and should be valid
     email: {
       type: DataTypes.STRING,
@@ -18,6 +31,12 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+
+    // is the account currently active? either unverified or user requested to delete. kept in active for 2 weeks utmost, then deleted.
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   });
 
@@ -28,14 +47,15 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   // Hooks are automatic methods that run during various phases of the User Model lifecycle. In this case, before hte user is created, we automatically hash the password
-  User.addHook("beforeCreate", user => {
-    // user is the user object submitted on creation
-    user.password = bcrypt.hashSync(
-      user.password,
-      bcrypt.genSaltSync(10),
-      null
-    );
-  });
+  // for hashing the password, i have gone with the controller file. below is sequellize method.
+  // User.addHook("beforeCreate", user => {
+  //   // user is the user object submitted on creation
+  //   user.password = bcrypt.hashSync(
+  //     user.password,
+  //     bcrypt.genSaltSync(10),
+  //     null
+  //   );
+  // });
 
   return User;
 };

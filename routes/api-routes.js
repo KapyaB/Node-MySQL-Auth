@@ -1,10 +1,10 @@
 const db = require("../models");
-const passprt = require("../config/passport");
+const passport = require("../config/passport");
 
 module.exports = app => {
   app.post(
     "/api/login",
-    passprt.authenticate("local", async (req, res) => {
+    passport.authenticate("local", async (req, res) => {
       // send the user the route to the members page
       res.json("/members");
     })
