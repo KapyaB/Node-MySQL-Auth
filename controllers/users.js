@@ -70,5 +70,52 @@ module.exports = {
       newUser,
       msg: "Sign up successful!"
     });
+  },
+
+  // Sign in
+  signIn: async (req, res, next) => {
+    const { email, password } = req.value.body;
+    try {
+      // find user
+      const user = await User.findOne({
+        where: { email: email }
+      });
+
+      // no user with provided email
+      if (!user) {
+        return res
+          .status(400)
+          .json(
+            createError(
+              "Incorrect credentials. Please check your email and/or password"
+            )
+          );
+      }
+
+      // handle unverified email address here
+
+      // compare passwords
+      const isMatch = await bcrypt.compare(password, user.password);
+      // wrong password
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json(
+            createError(
+              "Incorrect credentials. Please check your email and/or password"
+            )
+          );
+      }
+
+      // reactivate account if wasn't
+      await User.update({ isActive: true }, { where: { email: email } });
+
+      // generate access token
+      const token = signToken(user);
+      // send back token
+      res.status(200).json(token);
+    } catch (err) {
+      res.staus(500).send("internal Server error");
+    }
   }
 };

@@ -13,4 +13,9 @@ router
   .route("/signup")
   .post(validateBody(schemas.signUpSchema), usersController.signUp);
 
+// Sing in
+router
+  .route("/signin")
+  .post(validateBody(schemas.signInSchema), usersController.signIn);
+
 module.exports = router;
