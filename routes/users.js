@@ -18,4 +18,7 @@ router
   .route("/signin")
   .post(validateBody(schemas.signInSchema), usersController.signIn);
 
+// fetch user by id
+router.route("/user").get(auth, usersController.getUser);
+
 module.exports = router;

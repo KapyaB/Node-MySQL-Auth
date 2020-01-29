@@ -115,6 +115,24 @@ module.exports = {
       // send back token
       res.status(200).json(token);
     } catch (err) {
+      console.error(err.message);
+      res.staus(500).send("internal Server error");
+    }
+  },
+
+  // Get user
+  getUser: async (req, res, next) => {
+    try {
+      const user = await User.findByPk(req.user.id);
+
+      // user not found
+      if (!user) {
+        return res.status(400).json(createError("User not found"));
+      }
+
+      return res.status(200).json(user);
+    } catch (err) {
+      console.error(err.message);
       res.staus(500).send("internal Server error");
     }
   }
