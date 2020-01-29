@@ -12,3 +12,5 @@ const passportJwt = passport.authenticate("jwt", { session: false });
 router
   .route("/signup")
   .post(validateBody(schemas.signUpSchema), usersController.signUp);
+
+module.exports = router;

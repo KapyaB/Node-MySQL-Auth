@@ -53,7 +53,7 @@ module.exports = {
           }
         });
 
-        return res.status(400).json({ errors });
+        return res.status(400).json(errors);
       }
 
       // create an object of validated values to pass to the controllers

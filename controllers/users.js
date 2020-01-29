@@ -34,7 +34,7 @@ module.exports = {
   // signup
   signUp: async (req, res, next) => {
     // the request body is coming from JOI validator
-    const { userame, email, password } = req.value.body;
+    let { username, email, password } = req.value.body;
 
     // check if user already exists by email
     let foundUser = await User.findOne({
@@ -42,6 +42,7 @@ module.exports = {
         email: email
       }
     });
+
     if (foundUser) {
       return res.status(403).json(createError("Email address taken"));
     }
@@ -54,7 +55,7 @@ module.exports = {
 
     // save new user
     const newUser = await User.create({
-      userame,
+      username,
       email,
       password
     });

@@ -7,13 +7,13 @@ module.exports = (sequelize, DataTypes) => {
   var User = sequelize.define("User", {
     // unique identifier. workaroud for the easy-to-guess int ids
     uuid: {
-      type: Sequelize.UUID,
-      defaultValue: Sequelize.UUIDV1,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
 
     username: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.STRING,
       allowNull: false
     },
 
@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false
     }
   });
+  User.removeAttribute("id");
 
   // Creating custom method for user model. This checks if an unhashed password matches the hashed password stored in the database.
   User.prototype.validPassword = password => {
@@ -46,16 +47,12 @@ module.exports = (sequelize, DataTypes) => {
     return bcrypt.compareSync(password, this.password);
   };
 
-  // Hooks are automatic methods that run during various phases of the User Model lifecycle. In this case, before hte user is created, we automatically hash the password
-  // for hashing the password, i have gone with the controller file. below is sequellize method.
-  // User.addHook("beforeCreate", user => {
-  //   // user is the user object submitted on creation
-  //   user.password = bcrypt.hashSync(
-  //     user.password,
-  //     bcrypt.genSaltSync(10),
-  //     null
-  //   );
-  // });
+  // Hooks are automatic methods that run during various phases of the User Model lifecycle. In this case, before the user is created, we automatically generate a uuid
+  // Can also be used for hashing the password, but i have gone with the controller file.
+  User.addHook("beforeCreate", user => {
+    // user is the user object submitted on creation
+    user.uuid = Sequelize.UUIDV1;
+  });
 
   return User;
 };
